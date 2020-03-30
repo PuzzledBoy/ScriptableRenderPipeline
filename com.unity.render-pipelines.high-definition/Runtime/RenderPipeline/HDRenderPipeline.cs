@@ -821,7 +821,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
             m_AlphaToMaskBlock = new RenderStateBlock
             {
-                blendState = new BlendState(),
+                blendState = new BlendState(true, false),
                 mask = RenderStateMask.Blend
             };
         }
