@@ -80,9 +80,14 @@ namespace UnityEditor.Rendering.HighDefinition
             {
                 EditorGUI.indentLevel++;
                 int cascadeCount = m_CascadeShadowSplitCount.value.intValue;
+                string[] cascadeOrder = { "first", "second", "third" };
+
                 for (int i = 0; i < cascadeCount - 1; i++)
                 {
-                    PropertyField(m_CascadeShadowSplits[i], EditorGUIUtility.TrTextContent(string.Format("Split {0}", i + 1)));
+                    string tooltipOverride = (unit == Unit.Metric) ?
+                        $"Sets the position of the {cascadeOrder[i]} cascade split as a distance value (in meters)." :
+                        $"Sets the position of the {cascadeOrder[i]} cascade split as a percentage of Max Distance.";
+                    PropertyField(m_CascadeShadowSplits[i], EditorGUIUtility.TrTextContent(string.Format("Split {0}", i + 1), tooltipOverride));
                 }
 
                 if (HDRenderPipeline.s_UseCascadeBorders)
