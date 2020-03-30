@@ -57,11 +57,11 @@ namespace UnityEngine.Rendering.HighDefinition
         /// <summary>Number of cascades HDRP uses for cascaded shadow maps.</summary>
         [Tooltip("Controls the number of cascades HDRP uses for cascaded shadow maps.")]
         public NoInterpClampedIntParameter      cascadeShadowSplitCount = new NoInterpClampedIntParameter(4, 1, 4);
-        /// <summary>Position of the first cascade split as a percentage of Max Distance if the parameter is normalized or as a distance value if it's not normalized.</summary>
+        /// <summary>Position of the first cascade split as a percentage of Max Distance if the parameter is normalized or as the distance from the camera if it's not normalized.</summary>
         public CascadePartitionSplitParameter   cascadeShadowSplit0 = new CascadePartitionSplitParameter(0.05f);
-        /// <summary>Position of the second cascade split as a percentage of Max Distance if the parameter is normalized or as a distance value if it's not normalized.</summary>
+        /// <summary>Position of the second cascade split as a percentage of Max Distance if the parameter is normalized or as the distance from the camera if it's not normalized.</summary>
         public CascadePartitionSplitParameter   cascadeShadowSplit1 = new CascadePartitionSplitParameter(0.15f);
-        /// <summary>Sets the position of the third cascade split as a percentage of Max Distance if the parameter is normalized or as a distance value if it's not normalized.</summary>
+        /// <summary>Sets the position of the third cascade split as a percentage of Max Distance if the parameter is normalized or as the distance from the camera if it's not normalized.</summary>
         public CascadePartitionSplitParameter   cascadeShadowSplit2 = new CascadePartitionSplitParameter(0.3f);
         /// <summary>Border size between the first and second cascade split.</summary>
         [Tooltip("Sets the border size between the first and second cascade split.")]
