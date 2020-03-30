@@ -86,7 +86,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 for (int i = 0; i < cascadeCount - 1; i++)
                 {
                     string tooltipOverride = (unit == Unit.Metric) ?
-                        $"Sets the distance in meters of the {cascadeOrder[i]} cascade split." :
+                        $"Sets the distance (in meters) of the {cascadeOrder[i]} cascade split." :
                         $"Sets the position of the {cascadeOrder[i]} cascade split as a percentage of Max Distance.";
                     PropertyField(m_CascadeShadowSplits[i], EditorGUIUtility.TrTextContent(string.Format("Split {0}", i + 1), tooltipOverride));
                 }
