@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Graphing;
 using UnityEditor.Graphing.Util;
+using UnityEditor.ShaderGraph.DY;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
@@ -115,15 +116,26 @@ namespace UnityEditor.ShaderGraph
             finalShader.AppendLine(@"Shader ""{0}""", outputName);
             using (finalShader.BlockScope())
             {
-                SubShaderGenerator.GeneratePropertiesBlock(finalShader, shaderProperties, shaderKeywords, mode);
+                // DY Extension
+                SubShaderGenerator.GeneratePropertiesBlock(finalShader, this, shaderProperties, shaderKeywords, mode);
 
                 foreach (var subShader in m_SubShaders)
                 {
                     if (mode != GenerationMode.Preview || subShader.IsPipelineCompatible(GraphicsSettings.renderPipelineAsset))
                         finalShader.AppendLines(subShader.GetSubshader(this, mode, sourceAssetDependencyPaths));
                 }
-
+                
                 finalShader.AppendLine(@"FallBack ""Hidden/Shader Graph/FallbackError""");
+                
+                // DYExtension - Custom Editor
+                if (this is IDYSGMasterNodeExtension extension)
+                {
+                    var editor = extension.customEditor;
+                    editor = string.IsNullOrEmpty(editor) || string.IsNullOrEmpty(editor.Trim())?  "UnityEditor.Rendering.Universal.DY.DYSGMasterNodeGUI" : editor;
+                    finalShader.AppendLine($@"CustomEditor ""{editor}"" ");
+
+                    extension.GetAfterSubShaderString(finalShader);
+                }
             }
             configuredTextures = shaderProperties.GetConfiguredTexutres();
             return finalShader.ToString();
