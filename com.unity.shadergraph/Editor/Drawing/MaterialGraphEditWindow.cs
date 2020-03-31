@@ -232,7 +232,7 @@ namespace UnityEditor.ShaderGraph.Drawing
                 if (graphObject.isDirty && EditorUtility.DisplayDialog("Shader Graph Has Been Modified", "Do you want to save the changes you made in the Shader Graph?\n" + nameOfFile + "\n\nYour changes will be lost if you don't save them.", "Save", "Don't Save"))
                     UpdateAsset();
                 Undo.ClearUndo(graphObject);
-                DestroyImmediate(graphObject);
+                graphObject = null;
             }
 
             graphEditorView = null;
@@ -282,6 +282,12 @@ namespace UnityEditor.ShaderGraph.Drawing
                 if (string.IsNullOrEmpty(path) || graphObject == null)
                     return;
 
+                var oldShader = AssetDatabase.LoadAssetAtPath<Shader>(path);
+                if (oldShader != null)
+                    ShaderUtil.ClearShaderMessages(oldShader);
+
+                ShaderGraphAnalytics.SendShaderGraphEvent(selectedGuid, graphObject.graph);
+
                 UpdateShaderGraphOnDisk(path);
 
                 if (GraphData.onSaveGraph != null)
@@ -290,7 +296,7 @@ namespace UnityEditor.ShaderGraph.Drawing
                     if (shader != null)
                     {
                         GraphData.onSaveGraph(shader, (graphObject.graph.outputNode as MasterNode).saveContext);
-                    }                    
+                    }
                 }
 
                 graphObject.isDirty = false;
@@ -530,6 +536,7 @@ namespace UnityEditor.ShaderGraph.Drawing
                     var fromPropertyNode = fromNode as PropertyNode;
                     var fromProperty = fromPropertyNode != null ? materialGraph.properties.FirstOrDefault(p => p.guid == fromPropertyNode.propertyGuid) : null;
                     prop.displayName = fromProperty != null ? fromProperty.displayName : fromSlot.concreteValueType.ToString();
+                    prop.displayName = GraphUtil.SanitizeName(subGraph.addedInputs.Select(p => p.displayName), "{0} ({1})", prop.displayName);
 
                     subGraph.AddGraphInput(prop);
                     var propNode = new PropertyNode();

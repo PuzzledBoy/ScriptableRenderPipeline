@@ -4,14 +4,12 @@ using System.Linq;
 using UnityEditor.Graphing;
 using UnityEditor.ShaderGraph.Internal;
 using Data.Util;
-//using UnityEditor.ShaderGraph.DY;
 
 namespace UnityEditor.ShaderGraph
 {
     static class SubShaderGenerator
     {
-        // DY Extension
-        public static void GeneratePropertiesBlock(ShaderStringBuilder sb, AbstractMaterialNode node, PropertyCollector propertyCollector, KeywordCollector keywordCollector, GenerationMode mode)
+        public static void GeneratePropertiesBlock(ShaderStringBuilder sb, PropertyCollector propertyCollector, KeywordCollector keywordCollector, GenerationMode mode)
         {
             sb.AppendLine("Properties");
             using (sb.BlockScope())
@@ -21,9 +19,6 @@ namespace UnityEditor.ShaderGraph
                     sb.AppendLine(prop.GetPropertyBlockString());
                 }
 
-                // DY Extension
-                if (node is DY.IDYSGMasterNodeExtension extension) extension.GetCustomPropertiesString(sb);
-                
                 // Keywords use hardcoded state in preview
                 // Do not add them to the Property Block
                 if(mode == GenerationMode.Preview)
@@ -236,8 +231,7 @@ namespace UnityEditor.ShaderGraph
             finalShader.AppendLine(@"Shader ""{0}""", name);
             using (finalShader.BlockScope())
             {
-                // DY Extension
-                SubShaderGenerator.GeneratePropertiesBlock(finalShader,node, shaderProperties, shaderKeywords, mode);
+                SubShaderGenerator.GeneratePropertiesBlock(finalShader, shaderProperties, shaderKeywords, mode);
                 finalShader.AppendNewLine();
 
                 finalShader.AppendLine(@"HLSLINCLUDE");

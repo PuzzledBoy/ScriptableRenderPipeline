@@ -49,7 +49,7 @@ namespace UnityEditor.Rendering.Universal
         [InterpolatorPack]
         internal struct Varyings
         {
-            [Semantic("SV_Position")]
+            [Semantic("SV_POSITION")]
             Vector4 positionCS;
             [Optional]
             Vector3 positionWS;
@@ -70,8 +70,6 @@ namespace UnityEditor.Rendering.Universal
             [Optional]
             Vector3 viewDirectionWS;
             [Optional]
-            Vector3 bitangentWS;
-            [Optional]
             Vector4 screenPosition;
             [Optional][PreprocessorIf("defined(LIGHTMAP_ON)")]
             Vector2 lightmapUV;
@@ -83,13 +81,20 @@ namespace UnityEditor.Rendering.Universal
             Vector4 shadowCoord;
             [Semantic("CUSTOM_INSTANCE_ID")] [PreprocessorIf("UNITY_ANY_INSTANCING_ENABLED")]
             uint instanceID;
-            [Semantic("FRONT_FACE_SEMANTIC")][SystemGenerated][OverrideType("FRONT_FACE_TYPE")][PreprocessorIf("defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)")]
-            bool cullFace;
-            [Semantic("SV_RenderTargetArrayIndex")] [PreprocessorIf("(defined(UNITY_STEREO_INSTANCING_ENABLED))")]
+            [Semantic("SV_RenderTargetArrayIndex")]
+            [SystemGenerated]
+            [PreprocessorIf("(defined(UNITY_STEREO_INSTANCING_ENABLED))")]
             uint stereoTargetEyeIndexAsRTArrayIdx;
-            [Semantic("BLENDINDICES0")] [PreprocessorIf("(defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || " +
-                                                        "(defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))")]
+            [Semantic("BLENDINDICES0")]
+            [SystemGenerated]
+            [PreprocessorIf("(defined(UNITY_STEREO_MULTIVIEW_ENABLED)) || " +
+                            "(defined(UNITY_STEREO_INSTANCING_ENABLED) && (defined(SHADER_API_GLES3) || defined(SHADER_API_GLCORE)))")]
             uint stereoTargetEyeIndexAsBlendIdx0;
+            [Semantic("FRONT_FACE_SEMANTIC")]
+            [SystemGenerated]
+            [OverrideType("FRONT_FACE_TYPE")]
+            [PreprocessorIf("defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_CULLFACE)")]
+            bool cullFace;
         };
 
         internal struct VertexDescriptionInputs
@@ -174,19 +179,17 @@ namespace UnityEditor.Rendering.Universal
             // Varyings
             new Dependency[]
             {
-                new Dependency("Varyings.positionWS",                 "Attributes.positionOS"),
-                new Dependency("Varyings.normalWS",                   "Attributes.normalOS"),
-                new Dependency("Varyings.tangentWS",                  "Attributes.tangentOS"),
-                new Dependency("Varyings.bitangentWS",                "Attributes.normalOS"),
-                new Dependency("Varyings.bitangentWS",                "Attributes.tangentOS"),
-                new Dependency("Varyings.texCoord0",                  "Attributes.uv0"),
-                new Dependency("Varyings.texCoord1",                  "Attributes.uv1"),
-                new Dependency("Varyings.texCoord2",                  "Attributes.uv2"),
-                new Dependency("Varyings.texCoord3",                  "Attributes.uv3"),
-                new Dependency("Varyings.color",                      "Attributes.color"),
-                new Dependency("Varyings.instanceID",                 "Attributes.instanceID"),
-                new Dependency("Varyings.stereoTargetEyeIndex",       "Attributes.instanceID"),
-                new Dependency("Varyings.stereoTargetEyeIndexSV",     "Attributes.instanceID"),
+                new Dependency("Varyings.positionWS",                           "Attributes.positionOS"),
+                new Dependency("Varyings.normalWS",                             "Attributes.normalOS"),
+                new Dependency("Varyings.tangentWS",                            "Attributes.tangentOS"),
+                new Dependency("Varyings.texCoord0",                            "Attributes.uv0"),
+                new Dependency("Varyings.texCoord1",                            "Attributes.uv1"),
+                new Dependency("Varyings.texCoord2",                            "Attributes.uv2"),
+                new Dependency("Varyings.texCoord3",                            "Attributes.uv3"),
+                new Dependency("Varyings.color",                                "Attributes.color"),
+                new Dependency("Varyings.instanceID",                           "Attributes.instanceID"),
+                new Dependency("Varyings.stereoTargetEyeIndexAsBlendIdx0",      "Attributes.instanceID"),
+                new Dependency("Varyings.stereoTargetEyeIndexAsRTArrayIdx",     "Attributes.instanceID"),
             },
             // Vertex DescriptionInputs
             new Dependency[]
@@ -234,10 +237,12 @@ namespace UnityEditor.Rendering.Universal
                 new Dependency("SurfaceDescriptionInputs.ViewSpaceNormal",           "SurfaceDescriptionInputs.WorldSpaceNormal"),
 
                 new Dependency("SurfaceDescriptionInputs.WorldSpaceTangent",         "Varyings.tangentWS"),
+                new Dependency("SurfaceDescriptionInputs.WorldSpaceTangent",         "SurfaceDescriptionInputs.WorldSpaceNormal"),
                 new Dependency("SurfaceDescriptionInputs.ObjectSpaceTangent",        "SurfaceDescriptionInputs.WorldSpaceTangent"),
                 new Dependency("SurfaceDescriptionInputs.ViewSpaceTangent",          "SurfaceDescriptionInputs.WorldSpaceTangent"),
 
-                new Dependency("SurfaceDescriptionInputs.WorldSpaceBiTangent",       "Varyings.bitangentWS"),
+                new Dependency("SurfaceDescriptionInputs.WorldSpaceBiTangent",       "SurfaceDescriptionInputs.WorldSpaceNormal"),
+                new Dependency("SurfaceDescriptionInputs.WorldSpaceBiTangent",       "SurfaceDescriptionInputs.WorldSpaceTangent"),
                 new Dependency("SurfaceDescriptionInputs.ObjectSpaceBiTangent",      "SurfaceDescriptionInputs.WorldSpaceBiTangent"),
                 new Dependency("SurfaceDescriptionInputs.ViewSpaceBiTangent",        "SurfaceDescriptionInputs.WorldSpaceBiTangent"),
 
